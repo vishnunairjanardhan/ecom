@@ -9,6 +9,9 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Navbar from './components/Navbar';
 import AddPayment from './components/AddPayment';
 import Koko from './components/Stripe';
+import "@stripe/stripe-js"
+import Success from './components/Success';
+import Cancel from './components/Cancel';
 
 
 function App() {
@@ -38,34 +41,30 @@ function App() {
 
 
   console.log(apidata, "All products")
-  
+
 
   return (
     <BrowserRouter>
       <Routes>
-
-         
-       
-
-       <Route path='/' element={ 
-       <div className='container'>
-          <div className='row'>
-          <Navbar/>
-        
-            {apidata?.map((i) => {
-              return (
-                <div key={i+5} className='col-3'>
-                  <Card prop1={i} />
-                </div>
-              )
-            })}
-           
-          </div>
-        </div>} />
-       {/* <Route path='/' element={<Navbar />} /> */}
+        <Route path='/' element={
+          <div className='container'>
+            <div className='row'>
+              <Navbar />
+              {apidata?.map((i) => {
+                return (
+                  <div key={i + 5} className='col-3'>
+                    <Card prop1={i} />
+                  </div>
+                )
+              })}
+            </div>
+          </div>} />
+        {/* <Route path='/' element={<Navbar />} /> */}
         <Route path='/cart' element={<Cart />} />
         <Route path='/AddPayment' element={<AddPayment />} />
         <Route path='/Koko' element={<Koko />} />
+        <Route path='/Success' element={<Success />} />
+        <Route path='/Cancel' element={<Cancel />} />
       </Routes>
     </BrowserRouter>
   );
