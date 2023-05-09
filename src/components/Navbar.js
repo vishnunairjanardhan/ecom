@@ -1,7 +1,7 @@
 import React from 'react'
 import { FaShoppingCart } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
-import Cart from './Cart';
+import Cart from './Checkout';
 const Navbar = () => {
   return (
     <div className='yup' style={{ marginBottom: "2rem" }}><nav className="navbar navbar-expand-lg bg-light">
@@ -33,7 +33,7 @@ const Navbar = () => {
               {/* <a className="nav-link disabled">Disabled</a> */}
             </li>
           </ul>
-          <Link to="/cart" className="btn btn-outline-success" type="submit" style={{marginRight:"4px"}} > <FaShoppingCart /></Link>
+          <Link to="/Checkout" className="btn btn-outline-success" type="submit" style={{marginRight:"4px"}} > <FaShoppingCart /></Link>
 
 
           <form className="d-flex" role="search">

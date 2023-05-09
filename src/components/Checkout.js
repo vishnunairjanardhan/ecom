@@ -3,12 +3,14 @@ import axios from 'axios';
 import NavbarForCart from './NavbarForCart';
 import FooterForCart from './FooterForCart';
 
-const Cart = () => {
-
+const Checkout    = () => {
+    const [getsinglecart,setGetSingleCart]=useState([])
     const [productsquantity, setProductsQuantity] = useState([])
     const bearerToken = process.env.REACT_APP_SECRET_API_KEY;
+    const getlastcart = getsinglecart[getsinglecart?.length - 1];
     const apiEndpoint = 'https://api.us-central1.gcp.commercetools.com/obongg26te1hxzh/carts/fc056b00-d1fa-405f-bb52-6cbb57bc7a80'
 
+    const apiEndpointff = `https://api.us-central1.gcp.commercetools.com/obongg26te1hxzh/carts/${getlastcart?.id}`
     const apiEndpointForAllCart = 'https://api.us-central1.gcp.commercetools.com/obongg26te1hxzh/carts'
 
 
@@ -19,24 +21,29 @@ const Cart = () => {
         }
     };
 
-    // to get all cart
-    const GetallCart=()=>{
+    // to set one cart
+     useEffect(()=>{
         axios.get(apiEndpointForAllCart, axiosConfig)
-        .then(response => console.log(response.data, "All carts"))
+        .then(response => setGetSingleCart(response.data.results))
         .catch(error => console.error(error));
-    }
+    },[])
+
+    // to get all cart
+    useEffect(()=>{
+        axios.get(apiEndpointForAllCart, axiosConfig)
+        .then(res=>{console.log(res.data, "All carts")})
+        .catch(error => console.error(error));
+    },[])
 
     useEffect(() => {
         axios.get(apiEndpoint, axiosConfig)
             .then(response => setProductsQuantity(response.data, "from cart"))
             // .then(response => console.log(response.data, "from cart"))
             .catch(error => console.error(error));
-
-          
     }, [])
-    console.log(productsquantity, "from cart")
+        console.log(productsquantity, "from cart")
 
-    GetallCart()
+    
 
     const deleteLineItem = (item_Id, item_Quantity, version) => {
         console.log(item_Id, item_Quantity, version, "from deleteLineItem")
@@ -69,7 +76,10 @@ const Cart = () => {
     }
 
 
-
+    console.log("from usestateof setlastcart ",getsinglecart)
+    
+    console.log("last cart is " ,getlastcart)
+    console.log(apiEndpointff,"this is url from last cart")
     return (
         <>
         <NavbarForCart/>
@@ -96,11 +106,11 @@ const Cart = () => {
                     })}
                 </div>
             </div>
-            <FooterForCart/>
+            <FooterForCart productsquantity={productsquantity.lineItems} />
         </>
 
     )
 
 }
 
-export default Cart
+export default Checkout   
