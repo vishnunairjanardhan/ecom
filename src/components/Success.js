@@ -1,6 +1,6 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import axios from 'axios';
-import { useEffect, useState } from 'react';
+import NavbarForCart from './NavbarForCart';
 
 const CreatePayment = async (Price) => {
   const DigitGenrator = (Math.floor(1000000000 + Math.random() * 9000000000))
@@ -35,7 +35,7 @@ const CreatePayment = async (Price) => {
           "currencyCode": "USD",
           "centAmount": 1000
         },
-        "state": "Pending"
+        "state": "Success"
       }]
     }, axiosConfig);
     console.log(response.data, "from CreatePayment ")
@@ -45,20 +45,17 @@ const CreatePayment = async (Price) => {
   catch (error) {
     console.error(error);
   }
-  
+
 }
 
-
-//  AddPayment function call
-
-const AddPayment = async (last_cart_id, cartver,pay_id) => {
-  console.log("adding payment..", last_cart_id, cartver,pay_id, {
+const AddPayment = async (last_cart_id, cartver, pay_id) => {
+  console.log("adding payment..", last_cart_id, cartver, pay_id, {
     "version": cartver,
     "actions": [
       {
         "action": "addPayment",
         "payment": {
-          "id": `${pay_id}`,
+          "id": pay_id,
           "typeId": "payment"
         }
       }
@@ -74,7 +71,6 @@ const AddPayment = async (last_cart_id, cartver,pay_id) => {
       'Content-Type': 'application/json'
     }
   };
-// 68
   try {
     const response = await axios.post(apiLastcart, {
       "version": cartver,
@@ -89,7 +85,8 @@ const AddPayment = async (last_cart_id, cartver,pay_id) => {
       ]
     }, axiosConfig)
     if (response?.data) {
-      console.log(last_cart_id, cartver,pay_id,"last_cart_id  cartver   pay_id", "from AddPayment")
+      console.log(last_cart_id, cartver, pay_id, "last_cart_id  cartver   pay_id", "from AddPayment")
+      return response
     }
   }
   catch (error) {
@@ -111,7 +108,7 @@ const CreatePaymentAddPayment = async (last_cart_id) => {
 
   try {
     const response = await axios.get(apiLastcart, axiosConfig);
-    console.log("CreatePaymentAddPayment is called",response.data.totalPrice.centAmount)
+    console.log("CreatePaymentAddPayment is called", response.data.totalPrice.centAmount)
     return response;
   }
   catch (error) {
@@ -148,29 +145,6 @@ const SetCustomerEmail = async (last_cart_id, cart_version) => {
     console.error(error);
   }
 
-}
-
-
-const CallSetCustomerEmail = async (last_cart_id) => {
-  const apiEndpoint = "https://api.us-central1.gcp.commercetools.com/obongg26te1hxzh/carts";
-  const bearerToken = process.env.REACT_APP_SECRET_API_KEY;
-  const axiosConfig = {
-    headers: {
-      'Authorization': `Bearer ${bearerToken}`,
-      'Content-Type': 'application/json'
-    }
-  };
-  try {
-    const response = await axios.get(apiEndpoint, axiosConfig);
-    if (response.data) {
-      console.log("from CallSetCustomerEmail", response.data.results)
-      const lastValue = response.data.results[response.data.results?.length - 1];
-      SetCustomerEmail(last_cart_id, lastValue?.version)
-    }
-  }
-  catch (error) {
-    console.error(error);
-  }
 }
 
 const SetShippingAddress = async (last_cart_id, cart_version) => {
@@ -220,31 +194,14 @@ const SetShippingAddress = async (last_cart_id, cart_version) => {
       ]
     }, axiosConfig)
     console.log("form SetShippingAddress", response.data)
+    if (response.data)
+      return response
   }
   catch (error) {
     console.error(error);
   }
 
 }
-
-const CallSetShippingAddress = async (last_cart_id) => {
-  const apiEndpoint = "https://api.us-central1.gcp.commercetools.com/obongg26te1hxzh/carts";
-  const bearerToken = process.env.REACT_APP_SECRET_API_KEY;
-  const axiosConfig = {
-    headers: {
-      'Authorization': `Bearer ${bearerToken}`,
-      'Content-Type': 'application/json'
-    }
-  };
-  try {
-    const response = await axios.get(apiEndpoint, axiosConfig);
-    return response;
-  }
-  catch (error) {
-    console.error(error);
-  }
-}
-
 
 const CreateOrder = async (last_cart_id, cart_version) => {
   const DigitGenrator = (Math.floor(10000000000 + Math.random() * 90000000000))
@@ -264,31 +221,15 @@ const CreateOrder = async (last_cart_id, cart_version) => {
       "orderNumber": `${DigitGenrator}`
     }, axiosConfig);
     console.log("from CreateOrder", response.data)
-  }
-  catch (error) {
-    console.error(error);
-  }
-}
-
-const CallCreateOrder = async () => {
-  const apiEndpoint = "https://api.us-central1.gcp.commercetools.com/obongg26te1hxzh/carts";
-  const bearerToken = process.env.REACT_APP_SECRET_API_KEY;
-  const axiosConfig = {
-    headers: {
-      'Authorization': `Bearer ${bearerToken}`,
-      'Content-Type': 'application/json'
+    if (response.data) {
+      return response
     }
-  };
-  try {
-    const response = await axios.get(apiEndpoint, axiosConfig);
-    return response;
   }
   catch (error) {
     console.error(error);
   }
 }
 
-//  
 const CreateCart = async () => {
   const apiEndpoint = "https://api.us-central1.gcp.commercetools.com/obongg26te1hxzh/carts";
   const bearerToken = process.env.REACT_APP_SECRET_API_KEY;
@@ -303,6 +244,10 @@ const CreateCart = async () => {
       "currency": "EUR"
     }, axiosConfig);
     console.log("from CreateCart", response.data)
+    localStorage.setItem("myKey", response.data?.id);
+    if (response.data) {
+      return response
+    }
   }
   catch (error) {
     console.error(error);
@@ -310,8 +255,9 @@ const CreateCart = async () => {
 }
 
 
-const AddItemShippingAddress = async (last_cart_id, cart_version) => {
-  const apiEndpoint = `https://api.us-central1.gcp.commercetools.com/obongg26te1hxzh/carts/${last_cart_id}`;
+const AddItemShippingAddress = async (LastCartId, CartVersion) => {
+  console.log("inside AddItemShippingAddress...", LastCartId, CartVersion)
+  const apiEndpoint = `https://api.us-central1.gcp.commercetools.com/obongg26te1hxzh/carts/${LastCartId}`;
   const bearerToken = process.env.REACT_APP_SECRET_API_KEY;
   const axiosConfig = {
     headers: {
@@ -321,7 +267,7 @@ const AddItemShippingAddress = async (last_cart_id, cart_version) => {
   };
   try {
     const response = await axios.post(apiEndpoint, {
-      "version": cart_version,
+      "version": CartVersion,
       "actions": [
         {
           "action": "addItemShippingAddress",
@@ -355,28 +301,8 @@ const AddItemShippingAddress = async (last_cart_id, cart_version) => {
       ]
     }, axiosConfig);
     console.log("from AddItemShippingAddress", response.data)
-  }
-  catch (error) {
-    console.error(error);
-  }
-}
-
-const CallAddItemShippingAddress=async()=>{
-  const apiEndpoint = "https://api.us-central1.gcp.commercetools.com/obongg26te1hxzh/carts";
-  const bearerToken = process.env.REACT_APP_SECRET_API_KEY;
-  const axiosConfig = {
-    headers: {
-      'Authorization': `Bearer ${bearerToken}`,
-      'Content-Type': 'application/json'
-    }
-  };
-
-  try {
-    const response = await axios.get(apiEndpoint, axiosConfig);
     if (response.data) {
-      console.log("from CallAddItemShippingAddress", response.data.results)
-      const lastValue = response.data.results[response.data.results?.length - 1];
-      AddItemShippingAddress(lastValue?.id,lastValue?.version)
+      return response
     }
   }
   catch (error) {
@@ -384,8 +310,8 @@ const CallAddItemShippingAddress=async()=>{
   }
 }
 
-const ChangeTaxMode = async (last_cart_id, cart_version) => {
-  const apiEndpoint = `https://api.us-central1.gcp.commercetools.com/obongg26te1hxzh/carts/${last_cart_id}`;
+const ChangeTaxMode = async (LastCartID, CartVersioN) => {
+  const apiEndpoint = `https://api.us-central1.gcp.commercetools.com/obongg26te1hxzh/carts/${LastCartID}`;
   const bearerToken = process.env.REACT_APP_SECRET_API_KEY;
   const axiosConfig = {
     headers: {
@@ -395,7 +321,7 @@ const ChangeTaxMode = async (last_cart_id, cart_version) => {
   };
   try {
     const response = await axios.post(apiEndpoint, {
-      "version": cart_version,
+      "version": CartVersioN,
       "actions": [
         {
           "action": "changeTaxMode",
@@ -404,39 +330,14 @@ const ChangeTaxMode = async (last_cart_id, cart_version) => {
       ]
     }, axiosConfig);
     console.log("from ChangeTaxMode", response.data)
-  }
-  catch (error) {
-    console.error(error);
-  }
-}
-
-const CallChangeTaxMode = async () => {
-
-  const apiEndpoint = "https://api.us-central1.gcp.commercetools.com/obongg26te1hxzh/carts";
-  const bearerToken = process.env.REACT_APP_SECRET_API_KEY;
-  const axiosConfig = {
-    headers: {
-      'Authorization': `Bearer ${bearerToken}`,
-      'Content-Type': 'application/json'
-    }
-  };
-
-  try {
-    const response = await axios.get(apiEndpoint, axiosConfig);
     if (response.data) {
-      console.log("from GetLastCart_Add_Change", response.data.results)
-      const lastValue = response.data.results[response.data.results?.length - 1];
-      ChangeTaxMode(lastValue?.id, lastValue?.version)
+
     }
   }
   catch (error) {
     console.error(error);
   }
 }
-
-
-
-
 
 const GetLastCart = async () => {
 
@@ -456,58 +357,56 @@ const GetLastCart = async () => {
       const lastValue = response.data.results[response.data.results?.length - 1];
 
       CreatePaymentAddPayment(lastValue?.id).then((r) => {
-        // response.data.totalPrice.centAmount
         if (r.data) {
           CreatePayment(r.data.totalPrice.centAmount).then((p) => {
             if (p?.data) {
-              console.log("response from log of createpayment",p?.data, '\nversion', p?.data?.version)
-              AddPayment(lastValue?.id, p?.data?.version,p?.data?.id)
-              // cart-url,cart-version,
+              console.log("response from log of createpayment", p?.data, '\nversion', p?.data?.version)
+              AddPayment(lastValue?.id, lastValue?.version, p?.data?.id).then((q) => {
+                if (q?.data) {
+                  SetShippingAddress(lastValue?.id, q?.data?.version).then((s) => {
+                    if (s?.data) {
+                      CreateOrder(lastValue?.id, s?.data.version).then((x) => {
+                        if (x?.data) {
+                          CreateCart().then((y) => {
+                            if (y?.data) {
+                              AddItemShippingAddress(y?.data?.id, y?.data?.version).then((z) => {
+                                if (z?.data) {
+                                  ChangeTaxMode(z?.data?.id, z?.data?.version)
+                                }
+                              })
+                            }
+                          })
+                        }
+                      })
+                    }
+                  })
+                }
+              })
             }
           })
         }
-        // CallSetCustomerEmail(lastValue?.id)
-      }).then(() => {
-        CallSetShippingAddress(lastValue?.id).then((res) => {
-          console.log("from CallSetShippingAddress", res.data.results)
-          if (res.data) {
-            const lastCart1 = res.data.results?.at(-1);
-            SetShippingAddress(lastCart1?.id, lastCart1?.version)
-          }
-        })
-      }).then(() => {
-        CallCreateOrder().then((res) => {
-          console.log("from CallCreateOrder", res.data.results)
-          if (res.data) {
-            const lastCart2 = res.data.results?.at(-1);
-            CreateOrder(lastCart2?.id, lastCart2?.version)
-          }
-        })
       })
-      // CreateCart()
     }
+  
   }
   catch (error) {
     console.error(error);
   }
 }
-// GetLastCart()
-// CallAddItemShippingAddress()
-// CallChangeTaxMode()
-
+let boolvalue=false
 const Success = () => {
-  // const myValue = localStorage.getItem("myKey");
-
-  // const CallAll= async()=>{
-    
-
-  // }
-
+  useEffect(()=>{
+    if(boolvalue===false){
+      GetLastCart()
+      boolvalue=true
+    }
+  },[])
   return (
     <>
+    <NavbarForCart/>
       <div>Order was successfull</div>
       <div>Continue to shopping........</div>
-      <button type="button" className="btn btn-info" onClick={GetLastCart}>Home</button>
+      <button type="button" className="btn btn-info" onClick={GetLastCart}>Confirm order</button>
     </>
   )
 }

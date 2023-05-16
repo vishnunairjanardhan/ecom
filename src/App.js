@@ -66,11 +66,11 @@ function App() {
   useEffect(()=>{
     GetLastCart_1()
     Data()
-  // const query = new URLSearchParams(window.location.search);
-  //     if (query.get("success")) {
-  //       console.log("Order placed! You will receive an email confirmation.");
-  //       window.location.href = "http://localhost:3000/success";
-  //     }
+  const query = new URLSearchParams(window.location.search);
+      if (query.get("success")) {
+        console.log("Order placed! You will receive an email confirmation.");
+        window.location.href = "http://localhost:3000/success";
+      }
   },[])
 
   console.log(apidata, "All products")

@@ -203,13 +203,13 @@ const Card = (props) => {
             const response = await axios.get(apiEndpointForLastCart, axiosConfig);
             if (response.data) {
                 console.log("from getCartVersion ", response.data)
-                if (flag === false) {
-                    // AddItemShippingAddress(response.data?.version);
-                    // CallAddItemShippingAddress()
-                    // ChangeTaxMode(response.data?.version);
-                    // CallChangeTaxMode()
-                    flag = true
-                }
+                // if (flag === false) {
+                //     // AddItemShippingAddress(response.data?.version);
+                //     // CallAddItemShippingAddress()
+                //     // ChangeTaxMode(response.data?.version);
+                //     // CallChangeTaxMode()
+                //     flag = true
+                // }
                 addLineItem(response.data?.version, props.prop1.id)
                 // CalladdLineItem()
             }
