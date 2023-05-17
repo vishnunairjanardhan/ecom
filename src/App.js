@@ -71,6 +71,9 @@ function App() {
         console.log("Order placed! You will receive an email confirmation.");
         window.location.href = "http://localhost:3000/success";
       }
+      if (query.get("canceled")) {
+        window.location.href = "http://localhost:3000/canceled";
+       }
   },[])
 
   console.log(apidata, "All products")

@@ -387,26 +387,27 @@ const GetLastCart = async () => {
         }
       })
     }
-  
+
   }
   catch (error) {
     console.error(error);
   }
 }
-let boolvalue=false
+let boolvalue = false
 const Success = () => {
-  useEffect(()=>{
-    if(boolvalue===false){
+  useEffect(() => {
+    if (boolvalue === false) {
       GetLastCart()
-      boolvalue=true
+      boolvalue = true
     }
-  },[])
+  }, [])
   return (
     <>
-    <NavbarForCart/>
+      <NavbarForCart />
       <div>Order was successfull</div>
       <div>Continue to shopping........</div>
-      <button type="button" className="btn btn-info" onClick={GetLastCart}>Confirm order</button>
+      <button type="button" className="btn btn-info" ><a className="nav-link" href="/">Home</a></button>
+      <a className="nav-link" href="/">Home</a>
     </>
   )
 }
