@@ -1,8 +1,71 @@
 import React from 'react'
+import { useEffect } from 'react'
 // import { Link } from 'react-router-dom'
-// import axios from 'axios';
+import axios from 'axios';
 const Cancel = () => {
- 
+
+  const RemoveDiscountCode = async (id, version, discount_id) => {
+    const apiEndpoint = `https://api.us-central1.gcp.commercetools.com/obongg26te1hxzh/carts/${id}`;
+    const bearerToken = process.env.REACT_APP_SECRET_API_KEY;
+    const axiosConfig = {
+      headers: {
+        'Authorization': `Bearer ${bearerToken}`,
+        'Content-Type': 'application/json'
+      }
+    };
+    try {
+      const response = await axios.post(apiEndpoint, {
+        "version": version,
+        "actions": [
+          {
+            "action": "removeDiscountCode",
+            "discountCode": {
+              "typeId": "discount-code",
+              "id": `${discount_id}`
+            }
+          }
+        ]
+      }, axiosConfig);
+      console.log("RemoveDiscountCode was called....", response)
+    }
+    catch (error) {
+      console.error(error);
+    }
+
+    console.log("RemoveDiscountCode...", "id is", apiEndpoint, "version is", version)
+  }
+
+  const Get_last_cart = async () => {
+    const apiEndpoint = "https://api.us-central1.gcp.commercetools.com/obongg26te1hxzh/carts";
+    const bearerToken = process.env.REACT_APP_SECRET_API_KEY;
+    const axiosConfig = {
+      headers: {
+        'Authorization': `Bearer ${bearerToken}`,
+        'Content-Type': 'application/json'
+      }
+    };
+    try {
+      const response = await axios.get(apiEndpoint, axiosConfig);
+      if (response.data) {
+        const lastValue = response.data.results[response.data.results?.length - 1];
+        console.log("Get_last_cart...", lastValue)
+        const flag = lastValue.discountCodes.length >= 1
+        console.log("flag is...", flag)
+        if (flag) {
+          console.log("flag2 is...", flag)
+          RemoveDiscountCode(lastValue.id, lastValue.version, lastValue.discountCodes[0].discountCode.id)
+        }
+      }
+    }
+    catch (error) {
+      console.error(error);
+    }
+  }
+
+  useEffect(() => {
+    Get_last_cart()
+    console.log("Payment was cancell...", "Get_last_cart was called")
+  }, [])
 
   return (
     <>

@@ -406,7 +406,7 @@ const Success = () => {
       <NavbarForCart />
       <div>Order was successfull</div>
       <div>Continue to shopping........</div>
-      <button type="button" className="btn btn-info" ><a className="nav-link" href="/">Home</a></button>
+      <button type="button" className="btn btn-info" ><a className="nav-link" href="/">Continue shopping</a></button>
       <a className="nav-link" href="/">Home</a>
     </>
   )

@@ -9,8 +9,8 @@ const FooterForCart = (props) => {
 
     return (
         <>
-            <div class="card text-center">
-                <div class="card-footer text-muted">
+            <div className="card text-center">
+                <div className="card-footer text-muted">
                     {/* <Link to="/StripeCustomPayment" type="button" class="btn btn-info">Order now</Link> */}
                     {/* <button type="button" className="btn btn-info" onClick={redirectToCheckout_1}>Order now</button> */}
                     <form action='/create-checkout-session' method="POST">
