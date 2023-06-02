@@ -7,8 +7,9 @@ import Subtotal from './Subtotal';
 
 const Checkout = () => {
     const [productsquantity, setProductsQuantity] = useState([])
-    const [couponprice, setCouponPrice]=useState(null)
-    const [inputValue,setInputValue]=useState("")
+    const [couponprice, setCouponPrice] = useState(null)
+    const [inputValue, setInputValue] = useState("")
+    const [giftcardvalue, setGiftCardValue] = useState("")
     const bearerToken = process.env.REACT_APP_SECRET_API_KEY;
     const apiEndpointForAllCart = 'https://api.us-central1.gcp.commercetools.com/obongg26te1hxzh/carts'
 
@@ -23,7 +24,7 @@ const Checkout = () => {
         axios.get(apiEndpointForAllCart, axiosConfig)
             .then(res => { console.log(res.data, "All carts") })
             .catch(error => console.error(error));
-           
+
     }, [])
 
     // Set all Products with last cart
@@ -95,10 +96,15 @@ const Checkout = () => {
 
     const handleInputChange = (event) => {
         setInputValue(event.target.value);
-        console.log("handleInputChange...",event.target.value)
-      };
+        console.log("handleInputChange...", event.target.value)
+    };
 
-    const CouponFunc=async(Cart_version)=>{
+    const handleInputChangeforgiftcard = (event) => {
+        setGiftCardValue(event.target.value);
+        console.log("handleInputChangeforgiftcard...", event.target.value)
+    };
+
+    const CouponFunc = async (Cart_version) => {
         const apiLastcart = `https://api.us-central1.gcp.commercetools.com/obongg26te1hxzh/carts/${myValue}`;
         const bearerToken = process.env.REACT_APP_SECRET_API_KEY;
         const axiosConfig = {
@@ -107,19 +113,19 @@ const Checkout = () => {
                 'Content-Type': 'application/json'
             }
         };
-        console.log("CouponFunc..",Cart_version,myValue,inputValue)
-        try{
-            const response = await axios.post(apiLastcart,{
+        console.log("CouponFunc..", Cart_version, myValue, inputValue)
+        try {
+            const response = await axios.post(apiLastcart, {
                 "version": Cart_version,
                 "actions": [
                     {
-                        "action" : "addDiscountCode",
-                        "code" : `${inputValue}`
-                      }
+                        "action": "addDiscountCode",
+                        "code": `${inputValue}`
+                    }
                 ]
-            },axiosConfig);
-            if(response.data){
-                console.log("CouponFunc..",response.data)
+            }, axiosConfig);
+            if (response.data) {
+                console.log("CouponFunc..", response.data)
                 setCouponPrice(response.data.totalPrice.centAmount)
             }
         }
@@ -129,7 +135,7 @@ const Checkout = () => {
 
     }
 
-    const AddCouponCodeFunc=async()=>{
+    const AddCouponCodeFunc = async () => {
         const apiEndpoint = "https://api.us-central1.gcp.commercetools.com/obongg26te1hxzh/carts";
         const bearerToken = process.env.REACT_APP_SECRET_API_KEY;
         const axiosConfig = {
@@ -138,12 +144,12 @@ const Checkout = () => {
                 'Content-Type': 'application/json'
             }
         };
-        try{
+        try {
             const response = await axios.get(apiEndpoint, axiosConfig);
             if (response.data) {
                 const lastValue = response.data.results[response.data.results?.length - 1];
-                console.log("AddCouponCodeFunc...",lastValue)
-                CouponFunc(lastValue.version)                
+                console.log("AddCouponCodeFunc...", lastValue)
+                CouponFunc(lastValue.version)
             }
 
         }
@@ -153,7 +159,7 @@ const Checkout = () => {
     }
 
 
-    const Create_CartDiscount= async() => {
+    const Create_CartDiscount = async () => {
         const apiEndpoint = "https://api.us-central1.gcp.commercetools.com/obongg26te1hxzh/cart-discounts";
         const bearerToken = process.env.REACT_APP_SECRET_API_KEY;
         const axiosConfig = {
@@ -163,29 +169,29 @@ const Checkout = () => {
             }
         };
 
-        try{
-            const response = await axios.post(apiEndpoint,{
-                "name" : {
-                  "en" : "May_End_30%"
+        try {
+            const response = await axios.post(apiEndpoint, {
+                "name": {
+                    "en": "May_End_30%"
                 },
-                "value" : {
-                  "type" : "absolute",
-                  "money" : [ {
-                    "currencyCode" : "EUR",
-                    "centAmount" : 5000
-                  } ]
+                "value": {
+                    "type": "absolute",
+                    "money": [{
+                        "currencyCode": "EUR",
+                        "centAmount": 5000
+                    }]
                 },
-                "cartPredicate" : "1=1",
-                "target" : {
-                  "type" : "lineItems",
-                  "predicate" : "1=1"
+                "cartPredicate": "1=1",
+                "target": {
+                    "type": "lineItems",
+                    "predicate": "1=1"
                 },
-                "sortOrder" : `${Math.random()}`,
-                "isActive" : true,
-                "requiresDiscountCode" : true
-              },axiosConfig);
-              console.log("Create_CartDiscount....",response)
-              if (response.data){
+                "sortOrder": `${Math.random()}`,
+                "isActive": true,
+                "requiresDiscountCode": true
+            }, axiosConfig);
+            console.log("Create_CartDiscount....", response)
+            if (response.data) {
                 Create_DiscountCode(response.data);
             }
         }
@@ -194,7 +200,8 @@ const Checkout = () => {
         }
     }
 
-    const Create_DiscountCode= async(r) => {
+    const Create_DiscountCode = async (r, s, t) => {
+        console.log("(3)Create_DiscountCode....", r)
         const apiEndpoint = "https://api.us-central1.gcp.commercetools.com/obongg26te1hxzh/discount-codes";
         const bearerToken = process.env.REACT_APP_SECRET_API_KEY;
         const axiosConfig = {
@@ -203,26 +210,140 @@ const Checkout = () => {
                 'Content-Type': 'application/json'
             }
         };
-        try{
-            const response = await axios.post(apiEndpoint,{
-                "code" : "maykey",
-                "name" : {
-                  "en" : "maykey99"
+        try {
+            const response = await axios.post(apiEndpoint, {
+                "code": `${s}`,
+                "name": {
+                    "en": `${t}`
                 },
-                "cartDiscounts" : [ {
-                  "typeId" : "cart-discount",
-                  "id" : `${r.id}` //respones id from Create_DiscountCode function 
-                } ],
-                "isActive" : true,
-                "cartPredicate" : "1=1"
-              },axiosConfig);
-              console.log("Create_DiscountCode......",response)
+                "cartDiscounts": [{
+                    "typeId": "cart-discount",
+                    "id": `${r.id}` //respones id from Create_DiscountCode function 
+                }],
+                "isActive": true,
+                "cartPredicate": "1=1"
+            }, axiosConfig);
+            console.log("(4) Create_DiscountCode......", response)
 
         }
         catch (error) {
             console.error(error);
         }
     }
+
+    // code flow starts here for gift card.
+    const Check_Gift_Card_balance = async () => {
+        const apiEndpointGiftCard = `https://dev.api.giftcard.99minds.co/api/v1/giftcards/${giftcardvalue}`;
+        const bearerToken = process.env.REACT_APP_GIFT_CARD_SECRET_KEY;
+        const axiosConfigGiftCard = {
+            headers: {
+                'Authorization': `Bearer ${bearerToken}`,
+                'Content-Type': 'application/json'
+            }
+        };
+        const apiEndpointforCreate_CartDiscount = "https://api.us-central1.gcp.commercetools.com/obongg26te1hxzh/cart-discounts";
+        const bearerTokenCreate_CartDiscount = process.env.REACT_APP_SECRET_API_KEY;
+        const axiosConfig = {
+            headers: {
+                'Authorization': `Bearer ${bearerTokenCreate_CartDiscount}`,
+                'Content-Type': 'application/json'
+            }
+        };
+
+        const apiEndpointCreate_DiscountCode = "https://api.us-central1.gcp.commercetools.com/obongg26te1hxzh/discount-codes";
+        const apiEndpointlastcart = "https://api.us-central1.gcp.commercetools.com/obongg26te1hxzh/carts";
+
+
+        try {
+
+            const response = await axios.get(apiEndpointGiftCard, axiosConfigGiftCard)
+
+            if (response.data) {
+                console.log("(1)Check_Gift_Card_balance......", response.data.data.giftcard)
+                let giftcardnumber = response.data.data.giftcard.giftcard_number
+                let giftcardbalance = response.data.data.giftcard.balance
+                let giftcardcampaign_name = response.data.data.giftcard.campaign_name
+                // working on Create_CartDiscount 253 
+                
+
+                // Create_CartDiscount
+                const responseofCreate_CartDiscount = await axios.post(apiEndpointforCreate_CartDiscount, {
+                    "name": {
+                        "en": `${giftcardnumber}`
+                    },
+                    "value": {
+                        "type": "absolute",
+                        "money": [{
+                            "currencyCode": "EUR",
+                            "centAmount": giftcardbalance * 100
+                        }]
+                    },
+                    "cartPredicate": "1=1",
+                    "target": {
+                        "type": "lineItems",
+                        "predicate": "1=1"
+                    },
+                    "sortOrder": `${Math.random()}`,
+                    "isActive": true,
+                    "requiresDiscountCode": true
+                }, axiosConfig);
+
+                console.log("(2)responseofCreate_CartDiscount....", responseofCreate_CartDiscount)
+
+                if (responseofCreate_CartDiscount.data) {
+                    // Create_DiscountCode
+                    const responseCreate_DiscountCode = await axios.post(apiEndpointCreate_DiscountCode, {
+                        "code": `${giftcardnumber}`,
+                        "name": {
+                            "en": `${giftcardcampaign_name}`
+                        },
+                        "cartDiscounts": [{
+                            "typeId": "cart-discount",
+                            "id": `${responseofCreate_CartDiscount.data.id}` //respones id from Create_DiscountCode function 
+                        }],
+                        "isActive": true,
+                        "cartPredicate": "1=1"
+                    }, axiosConfig);
+                    console.log("(4) Create_DiscountCode......", responseCreate_DiscountCode)
+
+                    if (responseCreate_DiscountCode.data) {
+                        // lastcart
+                        const responselastcart = await axios.get(apiEndpointlastcart, axiosConfig);
+                        if (responselastcart.data) {
+                            const lastValue = responselastcart.data.results[responselastcart.data.results?.length - 1];
+                            console.log("AddCouponCodeFunc...", lastValue)
+                            // Add discountcode
+                            const apiLastcart = `https://api.us-central1.gcp.commercetools.com/obongg26te1hxzh/carts/${myValue}`;
+                            const response = await axios.post(apiLastcart, {
+                                "version": lastValue.version,
+                                "actions": [
+                                    {
+                                        "action": "addDiscountCode",
+                                        "code": `${giftcardnumber}`
+                                    }
+                                ]
+                            }, axiosConfig);
+                            if (response.data) {
+                                console.log("CouponFunc..", response.data)
+                                setCouponPrice(response.data.totalPrice.centAmount)
+                            }
+                            // CouponFunc(lastValue.version)
+
+                        }
+                    }
+
+
+                    // Create_DiscountCode(responseofCreate_CartDiscount.data,giftcardnumber,giftcardcampaign_name);
+                }
+
+            }
+        }
+        catch (error) {
+            console.error(error);
+        }
+    }
+
+    // gift card ends here
 
     return (
         <>
@@ -239,7 +360,7 @@ const Checkout = () => {
                             </tr>
                         </thead>
 
-                        {productsquantity?.lineItems?.map((i,j) => {
+                        {productsquantity?.lineItems?.map((i, j) => {
                             return (
                                 <tbody key={j}>
                                     <tr>
@@ -257,7 +378,7 @@ const Checkout = () => {
                                         </td>
                                         <td><div><h5 className="card-title"> {i["quantity"]}</h5></div>
                                         </td>
-                                        <td><div className="card-body" style={{ display: "flex" }}>${i["price"]["value"]["centAmount"]*i["quantity"] / 100}<li className="list-group-item" style={{ paddingLeft: "10px" }}><button type="button" className="btn btn-danger"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-trash" viewBox="0 0 16 16" onClick={() => { CalldeleteLineItem(i.id, i.quantity, productsquantity.version) }}>
+                                        <td><div className="card-body" style={{ display: "flex" }}>${i["price"]["value"]["centAmount"] * i["quantity"] / 100}<li className="list-group-item" style={{ paddingLeft: "10px" }}><button type="button" className="btn btn-danger"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-trash" viewBox="0 0 16 16" onClick={() => { CalldeleteLineItem(i.id, i.quantity, productsquantity.version) }}>
                                             <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6Z" />
                                             <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1ZM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118ZM2.5 3h11V2h-11v1Z" />
                                         </svg></button></li></div>
@@ -274,12 +395,12 @@ const Checkout = () => {
                         <tbody>
                             <tr>
                                 <th scope="row">Subtotal</th>
-                                <td>${<Subtotal/>}</td>
+                                <td>${<Subtotal />}</td>
                             </tr>
                             <tr>
                                 <th scope="row">Coupon Code</th>
                                 <p>
-                                    <button className="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample" onClick={()=>{console.log("Add Coupon called...")}} >
+                                    <button className="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample" onClick={() => { console.log("Add Coupon called...") }} >
                                         Add Coupon
                                     </button>
                                 </p>
@@ -291,18 +412,18 @@ const Checkout = () => {
                                                     <label htmlFor="input" className="col-form-label">Coupon</label>
                                                 </div>
                                                 <div className="col-auto" style={{ paddingRight: "10px" }}>
-                                                    <input type="Text" className="form-control" onChange={handleInputChange}/>
+                                                    <input type="Text" className="form-control" onChange={handleInputChange} />
                                                 </div>
                                                 <div className="col-auto" style={{ paddingRight: "10px" }}>
-                                                    <button type="button" className="btn btn-primary" onClick={()=>{AddCouponCodeFunc()}}>Redeem</button>
+                                                    <button type="button" className="btn btn-primary" onClick={() => { AddCouponCodeFunc() }}>Redeem</button>
                                                 </div>
                                             </div>
                                             <div style={{ display: "flex", width: "25%" }}>
                                                 <div className="col-auto" style={{ paddingRight: "10px" }}>
-                                                    <label htmlFor="input" className="col-form-label">Gift Card</label>
+                                                    <label htmlFor="input" className="col-form-label" >Gift Card</label>
                                                 </div>
                                                 <div className="col-auto" style={{ paddingRight: "10px" }}>
-                                                    <input type="Text" className="form-control" />
+                                                    <input type="Text" className="form-control" onChange={handleInputChangeforgiftcard} />
                                                 </div>
                                                 <div className="col-auto" style={{ paddingRight: "10px" }}>
                                                     <label htmlFor="input" className="col-form-label">Pin</label>
@@ -311,7 +432,7 @@ const Checkout = () => {
                                                     <input type="password" className="form-control" style={{ width: "120px" }} />
                                                 </div>
                                                 <div className="col-auto">
-                                                    <button type="button" className="btn btn-primary" onClick={()=>{Create_CartDiscount()}}>Redeem</button>
+                                                    <button type="button" className="btn btn-primary" onClick={() => { Check_Gift_Card_balance() }}>Redeem</button>
                                                 </div>
                                             </div>
                                         </div>
@@ -320,7 +441,7 @@ const Checkout = () => {
                             </tr>
                             <tr>
                                 <th scope="row">Grand Total</th>
-                                <td colSpan="2"><h1>${couponprice===null?(`${productsquantity?.totalPrice?.centAmount}`/100.00):(couponprice/100.00)}</h1></td>
+                                <td colSpan="2"><h1>${couponprice === null ? (`${productsquantity?.totalPrice?.centAmount}` / 100.00) : (couponprice / 100.00)}</h1></td>
                             </tr>
                         </tbody>
                     </table>

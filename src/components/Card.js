@@ -62,8 +62,6 @@ const Card = (props) => {
         catch (error) {
             console.error(error);
         }
-
-
     }
 
     const getCartVersion = async () => {
