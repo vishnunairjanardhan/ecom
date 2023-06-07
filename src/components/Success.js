@@ -4,7 +4,7 @@ import NavbarForCart from './NavbarForCart';
 
 const CreatePayment = async (Price) => {
   const DigitGenrator = (Math.floor(1000000000 + Math.random() * 9000000000))
-  const apiEndpoint = "https://api.us-central1.gcp.commercetools.com/obongg26te1hxzh/payments";
+  const apiEndpoint = "https://api.us-central1.gcp.commercetools.com/99minds/payments";
   const bearerToken = process.env.REACT_APP_SECRET_API_KEY;
   const axiosConfig = {
     headers: {
@@ -61,7 +61,7 @@ const AddPayment = async (last_cart_id, cartver, pay_id) => {
       }
     ]
   });
-  const apiLastcart = `https://api.us-central1.gcp.commercetools.com/obongg26te1hxzh/carts/${last_cart_id}`;
+  const apiLastcart = `https://api.us-central1.gcp.commercetools.com/99minds/carts/${last_cart_id}`;
 
   const bearerToken = process.env.REACT_APP_SECRET_API_KEY;
 
@@ -97,7 +97,7 @@ const AddPayment = async (last_cart_id, cartver, pay_id) => {
 
 const CreatePaymentAddPayment = async (last_cart_id) => {
 
-  const apiLastcart = `https://api.us-central1.gcp.commercetools.com/obongg26te1hxzh/carts/${last_cart_id}`;
+  const apiLastcart = `https://api.us-central1.gcp.commercetools.com/99minds/carts/${last_cart_id}`;
   const bearerToken = process.env.REACT_APP_SECRET_API_KEY;
   const axiosConfig = {
     headers: {
@@ -118,7 +118,7 @@ const CreatePaymentAddPayment = async (last_cart_id) => {
 }
 
 const SetCustomerEmail = async (last_cart_id, cart_version) => {
-  const apiLastcart = `https://api.us-central1.gcp.commercetools.com/obongg26te1hxzh/carts/${last_cart_id}`;
+  const apiLastcart = `https://api.us-central1.gcp.commercetools.com/99minds/carts/${last_cart_id}`;
   const bearerToken = process.env.REACT_APP_SECRET_API_KEY;
 
   const axiosConfig = {
@@ -148,7 +148,7 @@ const SetCustomerEmail = async (last_cart_id, cart_version) => {
 }
 
 const SetShippingAddress = async (last_cart_id, cart_version) => {
-  const apiLastcart = `https://api.us-central1.gcp.commercetools.com/obongg26te1hxzh/carts/${last_cart_id}`;
+  const apiLastcart = `https://api.us-central1.gcp.commercetools.com/99minds/carts/${last_cart_id}`;
   const bearerToken = process.env.REACT_APP_SECRET_API_KEY;
 
   const axiosConfig = {
@@ -176,8 +176,8 @@ const SetShippingAddress = async (last_cart_id, cart_version) => {
             "postalCode": "80933",
             "city": "Exemplary City",
             "region": "Exemplary Region",
-            "state": "Exemplary State",
-            "country": "DE",
+            "state": "",
+            "country": "US",
             "company": "My Company Name",
             "department": "Sales",
             "building": "Hightower 1",
@@ -205,7 +205,7 @@ const SetShippingAddress = async (last_cart_id, cart_version) => {
 
 const CreateOrder = async (last_cart_id, cart_version) => {
   const DigitGenrator = (Math.floor(10000000000 + Math.random() * 90000000000))
-  const apiEndpoint = "https://api.us-central1.gcp.commercetools.com/obongg26te1hxzh/orders"
+  const apiEndpoint = "https://api.us-central1.gcp.commercetools.com/99minds/orders"
   const bearerToken = process.env.REACT_APP_SECRET_API_KEY;
   const axiosConfig = {
     headers: {
@@ -231,7 +231,7 @@ const CreateOrder = async (last_cart_id, cart_version) => {
 }
 
 const CreateCart = async () => {
-  const apiEndpoint = "https://api.us-central1.gcp.commercetools.com/obongg26te1hxzh/carts";
+  const apiEndpoint = "https://api.us-central1.gcp.commercetools.com/99minds/carts";
   const bearerToken = process.env.REACT_APP_SECRET_API_KEY;
   const axiosConfig = {
     headers: {
@@ -257,7 +257,7 @@ const CreateCart = async () => {
 
 const AddItemShippingAddress = async (LastCartId, CartVersion) => {
   console.log("inside AddItemShippingAddress...", LastCartId, CartVersion)
-  const apiEndpoint = `https://api.us-central1.gcp.commercetools.com/obongg26te1hxzh/carts/${LastCartId}`;
+  const apiEndpoint = `https://api.us-central1.gcp.commercetools.com/99minds/carts/${LastCartId}`;
   const bearerToken = process.env.REACT_APP_SECRET_API_KEY;
   const axiosConfig = {
     headers: {
@@ -272,7 +272,7 @@ const AddItemShippingAddress = async (LastCartId, CartVersion) => {
         {
           "action": "addItemShippingAddress",
           "address": {
-            "key": "examplekey1",
+            "key": "exampleKey1",
             "title": "My Address",
             "salutation": "Mr.",
             "firstName": "Example",
@@ -311,7 +311,7 @@ const AddItemShippingAddress = async (LastCartId, CartVersion) => {
 }
 
 const ChangeTaxMode = async (LastCartID, CartVersioN) => {
-  const apiEndpoint = `https://api.us-central1.gcp.commercetools.com/obongg26te1hxzh/carts/${LastCartID}`;
+  const apiEndpoint = `https://api.us-central1.gcp.commercetools.com/99minds/carts/${LastCartID}`;
   const bearerToken = process.env.REACT_APP_SECRET_API_KEY;
   const axiosConfig = {
     headers: {
@@ -339,9 +339,36 @@ const ChangeTaxMode = async (LastCartID, CartVersioN) => {
   }
 }
 
+const Redeem = async () => {
+  const cardNo = localStorage.getItem('key');
+  const value= localStorage.getItem('value');
+  const url = 'https://dev.api.giftcard.99minds.co/api/v1/giftcards/redeem';
+  const requestBody = {
+    giftcard: {
+      giftcard_number: `${cardNo}`,
+      redemption_amount: value,
+    }
+  };
+
+  const bearerToken = process.env.REACT_APP_GIFT_CARD_SECRET_KEY;
+
+  try {
+    const response = await axios.post(url, requestBody, {
+      headers: {
+        Authorization: `Bearer ${bearerToken}`
+      }
+    });
+    console.log('Response:', response.data);
+    // Handle the response data here
+  } catch (error) {
+    console.error('Error:', error);
+    // Handle the error here
+  }
+};
+
 const GetLastCart = async () => {
 
-  const apiEndpoint = "https://api.us-central1.gcp.commercetools.com/obongg26te1hxzh/carts";
+  const apiEndpoint = "https://api.us-central1.gcp.commercetools.com/99minds/carts";
   const bearerToken = process.env.REACT_APP_SECRET_API_KEY;
   const axiosConfig = {
     headers: {
@@ -371,7 +398,8 @@ const GetLastCart = async () => {
                             if (y?.data) {
                               AddItemShippingAddress(y?.data?.id, y?.data?.version).then((z) => {
                                 if (z?.data) {
-                                  ChangeTaxMode(z?.data?.id, z?.data?.version)
+                                  ChangeTaxMode(z?.data?.id, z?.data?.version);
+                                  Redeem();
                                 }
                               })
                             }

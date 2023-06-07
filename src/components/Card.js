@@ -5,8 +5,8 @@ const Card = (props) => {
     const [getsinglecart, setGetSingleCart] = useState([])
     const getlastcart = getsinglecart[getsinglecart?.length - 1];
     const bearerToken = process.env.REACT_APP_SECRET_API_KEY;
-    const apiEndpointForAllCart = 'https://api.us-central1.gcp.commercetools.com/obongg26te1hxzh/carts'
-    const apiEndpointForLastCart = `https://api.us-central1.gcp.commercetools.com/obongg26te1hxzh/carts/${getlastcart?.id}`
+    const apiEndpointForAllCart = 'https://api.us-central1.gcp.commercetools.com/99minds/carts'
+    const apiEndpointForLastCart = `https://api.us-central1.gcp.commercetools.com/99minds/carts/${getlastcart?.id}`
 
     const axiosConfig = {
         headers: {
@@ -24,7 +24,7 @@ const Card = (props) => {
     const addLineItem = async (cartVersion, product_Id) => {
         console.log(cartVersion, product_Id, "get productId and caerVersion")
         const myValue = localStorage.getItem("myKey");
-        const apiEndpointaddLineItem = `https://api.us-central1.gcp.commercetools.com/obongg26te1hxzh/carts/${myValue}`
+        const apiEndpointaddLineItem = `https://api.us-central1.gcp.commercetools.com/99minds/carts/${myValue}`
         try {
             const response = await axios.post(apiEndpointaddLineItem, {
                 "version": cartVersion,
@@ -36,21 +36,21 @@ const Card = (props) => {
                         "quantity": 1,
                         "supplyChannel": {
                             "typeId": "channel",
-                            "id": "dc5188e6-2fa5-4632-ab24-8de4d256e54c"
+                            "id": "a2dcb7b0-09fd-44df-b82b-587e68505a37"
                         },
                         "distributionChannel": {
                             "typeId": "channel",
-                            "id": "dc5188e6-2fa5-4632-ab24-8de4d256e54c"
+                            "id": "a2dcb7b0-09fd-44df-b82b-587e68505a37"
                         },
                         "externalTaxRate": {
                             "name": "StandardExternalTaxRate",
                             "amount": 0.19,
-                            "country": "DE",
-                            "state": "Bavaria"
+                            "country": "US",
+                            "state": ""
                         },
                         "shippingDetails": {
                             "targets": [{
-                                "addressKey": "examplekey1",
+                                "addressKey": "exampleKey4",
                                 "quantity": 1
                             }]
                         }

@@ -12,7 +12,7 @@ function App() {
 
   const [apidata, setApidata] = useState([])
   const bearerToken = process.env.REACT_APP_SECRET_API_KEY;
-  const apiEndpoint = 'https://api.us-central1.gcp.commercetools.com/obongg26te1hxzh/products';
+  const apiEndpoint = 'https://api.us-central1.gcp.commercetools.com/99minds/products';
 
   const axiosConfig = {
     headers: {
@@ -23,7 +23,7 @@ function App() {
 
   const GetLastCart_1 = async () => {
 
-    const apiEndpoint = "https://api.us-central1.gcp.commercetools.com/obongg26te1hxzh/carts";
+    const apiEndpoint = "https://api.us-central1.gcp.commercetools.com/99minds/carts";
     const bearerToken = process.env.REACT_APP_SECRET_API_KEY;
     const axiosConfig = {
         headers: {

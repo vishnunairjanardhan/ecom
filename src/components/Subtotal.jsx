@@ -14,7 +14,7 @@ const Subtotal = () => {
     };
     useEffect(() => {
         const myValue = localStorage.getItem("myKey");
-        axios.get(`https://api.us-central1.gcp.commercetools.com/obongg26te1hxzh/carts/${myValue}`, axiosConfig)
+        axios.get(`https://api.us-central1.gcp.commercetools.com/99minds/carts/${myValue}`, axiosConfig)
             .then(response => setProductsQuantity(response?.data))
             .catch(error => console.error(error));
     }, [])

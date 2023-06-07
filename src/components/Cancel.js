@@ -5,7 +5,7 @@ import axios from 'axios';
 const Cancel = () => {
 
   const RemoveDiscountCode = async (id, version, discount_id) => {
-    const apiEndpoint = `https://api.us-central1.gcp.commercetools.com/obongg26te1hxzh/carts/${id}`;
+    const apiEndpoint = `https://api.us-central1.gcp.commercetools.com/99minds/carts/${id}`;
     const bearerToken = process.env.REACT_APP_SECRET_API_KEY;
     const axiosConfig = {
       headers: {
@@ -36,7 +36,7 @@ const Cancel = () => {
   }
 
   const Get_last_cart = async () => {
-    const apiEndpoint = "https://api.us-central1.gcp.commercetools.com/obongg26te1hxzh/carts";
+    const apiEndpoint = "https://api.us-central1.gcp.commercetools.com/99minds/carts";
     const bearerToken = process.env.REACT_APP_SECRET_API_KEY;
     const axiosConfig = {
       headers: {
