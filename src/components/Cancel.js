@@ -1,11 +1,13 @@
 import React from 'react'
 import { useEffect } from 'react'
-// import { Link } from 'react-router-dom'
 import axios from 'axios';
 const Cancel = () => {
 
+  const Url = process.env.REACT_APP_API_PUBLIC_URL;
+  const Project_key = process.env.REACT_APP_PROJECT_KEY
+
   const RemoveDiscountCode = async (id, version, discount_id) => {
-    const apiEndpoint = `https://api.us-central1.gcp.commercetools.com/99minds/carts/${id}`;
+    const apiEndpoint = `${Url}/${Project_key}/carts/${id}`;
     const bearerToken = process.env.REACT_APP_SECRET_API_KEY;
     const axiosConfig = {
       headers: {
@@ -36,7 +38,7 @@ const Cancel = () => {
   }
 
   const Get_last_cart = async () => {
-    const apiEndpoint = "https://api.us-central1.gcp.commercetools.com/99minds/carts";
+    const apiEndpoint = `${Url}/${Project_key}/carts`;
     const bearerToken = process.env.REACT_APP_SECRET_API_KEY;
     const axiosConfig = {
       headers: {

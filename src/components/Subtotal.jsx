@@ -3,6 +3,8 @@ import axios from 'axios';
 import { useState, useEffect } from 'react'
 
 const Subtotal = () => {
+    const Url = process.env.REACT_APP_API_PUBLIC_URL;
+    const Project_key = process.env.REACT_APP_PROJECT_KEY
     let subtotalvalue = 0
     const [productsquantity, setProductsQuantity] = useState([])
     const bearerToken = process.env.REACT_APP_SECRET_API_KEY;
@@ -14,7 +16,7 @@ const Subtotal = () => {
     };
     useEffect(() => {
         const myValue = localStorage.getItem("myKey");
-        axios.get(`https://api.us-central1.gcp.commercetools.com/99minds/carts/${myValue}`, axiosConfig)
+        axios.get(`${Url}/${Project_key}/carts/${myValue}`, axiosConfig)
             .then(response => setProductsQuantity(response?.data))
             .catch(error => console.error(error));
     }, [])

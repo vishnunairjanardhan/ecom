@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios';
 import NavbarForCart from './NavbarForCart';
+const Url = process.env.REACT_APP_API_PUBLIC_URL;
+const Project_key = process.env.REACT_APP_PROJECT_KEY
 
 const CreatePayment = async (Price) => {
   const DigitGenrator = (Math.floor(1000000000 + Math.random() * 9000000000))
-  const apiEndpoint = "https://api.us-central1.gcp.commercetools.com/99minds/payments";
+  const apiEndpoint = `${Url}/${Project_key}/payments`;
   const bearerToken = process.env.REACT_APP_SECRET_API_KEY;
   const axiosConfig = {
     headers: {
@@ -19,10 +21,10 @@ const CreatePayment = async (Price) => {
       "interfaceId": `${DigitGenrator - 6743}`,
       "amountPlanned": {
         "currencyCode": "USD",
-        "centAmount": Price
+        "centAmount": 99999
       },
       "paymentMethodInfo": {
-        "paymentInterface": "Stripe",
+        "paymentInterface": "Gift_card",
         "method": "CREDIT_CARD",
         "name": {
           "en": "Credit Card"
@@ -61,7 +63,7 @@ const AddPayment = async (last_cart_id, cartver, pay_id) => {
       }
     ]
   });
-  const apiLastcart = `https://api.us-central1.gcp.commercetools.com/99minds/carts/${last_cart_id}`;
+  const apiLastcart = `${Url}/${Project_key}/carts/${last_cart_id}`;
 
   const bearerToken = process.env.REACT_APP_SECRET_API_KEY;
 
@@ -97,7 +99,7 @@ const AddPayment = async (last_cart_id, cartver, pay_id) => {
 
 const CreatePaymentAddPayment = async (last_cart_id) => {
 
-  const apiLastcart = `https://api.us-central1.gcp.commercetools.com/99minds/carts/${last_cart_id}`;
+  const apiLastcart = `${Url}/${Project_key}/carts/${last_cart_id}`;
   const bearerToken = process.env.REACT_APP_SECRET_API_KEY;
   const axiosConfig = {
     headers: {
@@ -117,38 +119,8 @@ const CreatePaymentAddPayment = async (last_cart_id) => {
 
 }
 
-const SetCustomerEmail = async (last_cart_id, cart_version) => {
-  const apiLastcart = `https://api.us-central1.gcp.commercetools.com/99minds/carts/${last_cart_id}`;
-  const bearerToken = process.env.REACT_APP_SECRET_API_KEY;
-
-  const axiosConfig = {
-    headers: {
-      'Authorization': `Bearer ${bearerToken}`,
-      'Content-Type': 'application/json'
-    }
-  };
-
-  try {
-    const response = await axios.post(apiLastcart, {
-      "version": cart_version,
-      "actions": [
-        {
-          "action": "setCustomerEmail",
-          "email": "azharshaik@gmail.com"
-        }
-      ]
-    }, axiosConfig);
-    console.log(response.data, "from SetCustomerEmail")
-  }
-
-  catch (error) {
-    console.error(error);
-  }
-
-}
-
 const SetShippingAddress = async (last_cart_id, cart_version) => {
-  const apiLastcart = `https://api.us-central1.gcp.commercetools.com/99minds/carts/${last_cart_id}`;
+  const apiLastcart = `${Url}/${Project_key}/carts/${last_cart_id}`;
   const bearerToken = process.env.REACT_APP_SECRET_API_KEY;
 
   const axiosConfig = {
@@ -205,7 +177,7 @@ const SetShippingAddress = async (last_cart_id, cart_version) => {
 
 const CreateOrder = async (last_cart_id, cart_version) => {
   const DigitGenrator = (Math.floor(10000000000 + Math.random() * 90000000000))
-  const apiEndpoint = "https://api.us-central1.gcp.commercetools.com/99minds/orders"
+  const apiEndpoint = `${Url}/${Project_key}/orders`;
   const bearerToken = process.env.REACT_APP_SECRET_API_KEY;
   const axiosConfig = {
     headers: {
@@ -231,7 +203,7 @@ const CreateOrder = async (last_cart_id, cart_version) => {
 }
 
 const CreateCart = async () => {
-  const apiEndpoint = "https://api.us-central1.gcp.commercetools.com/99minds/carts";
+  const apiEndpoint = `${Url}/${Project_key}/carts`;
   const bearerToken = process.env.REACT_APP_SECRET_API_KEY;
   const axiosConfig = {
     headers: {
@@ -257,7 +229,7 @@ const CreateCart = async () => {
 
 const AddItemShippingAddress = async (LastCartId, CartVersion) => {
   console.log("inside AddItemShippingAddress...", LastCartId, CartVersion)
-  const apiEndpoint = `https://api.us-central1.gcp.commercetools.com/99minds/carts/${LastCartId}`;
+  const apiEndpoint = `${Url}/${Project_key}/carts/${LastCartId}`;
   const bearerToken = process.env.REACT_APP_SECRET_API_KEY;
   const axiosConfig = {
     headers: {
@@ -311,7 +283,7 @@ const AddItemShippingAddress = async (LastCartId, CartVersion) => {
 }
 
 const ChangeTaxMode = async (LastCartID, CartVersioN) => {
-  const apiEndpoint = `https://api.us-central1.gcp.commercetools.com/99minds/carts/${LastCartID}`;
+  const apiEndpoint = `${Url}/${Project_key}/carts/${LastCartID}`;
   const bearerToken = process.env.REACT_APP_SECRET_API_KEY;
   const axiosConfig = {
     headers: {
@@ -340,35 +312,50 @@ const ChangeTaxMode = async (LastCartID, CartVersioN) => {
 }
 
 const Redeem = async () => {
-  const cardNo = localStorage.getItem('key');
-  const value= localStorage.getItem('value');
-  const url = 'https://dev.api.giftcard.99minds.co/api/v1/giftcards/redeem';
-  const requestBody = {
-    giftcard: {
-      giftcard_number: `${cardNo}`,
-      redemption_amount: value,
+
+  const value1 = localStorage.getItem('Giftcard_id');
+  const value2 = localStorage.getItem('Giftcard_balance');
+  const id = JSON.parse(value1)
+  const balance = JSON.parse(value2)
+  console.log("Giftcard_id..", id)
+  console.log("Giftcard_balance..", balance)
+  const arr = [];
+  for (let i in id) {
+    console.log(id[i], balance[i]);
+    arr.push({
+      "giftcard_number": id[i],
+      "redemption_amount": balance[i]
+    })
+  }
+
+  if (arr.length !== 0) {
+    const url = 'https://dev.api.giftcard.99minds.co/api/v1/giftcards/bulk_redeem';
+
+    const bearerToken = process.env.REACT_APP_GIFT_CARD_SECRET_KEY;
+
+    try {
+      const response = await axios.post(url, {
+        "giftcard": {
+          // "store_ref": "store_b1e9eb7ae7873d14c6",
+          "data": arr
+        }
+      }, {
+        headers: {
+          Authorization: `Bearer ${bearerToken}`
+        }
+      });
+      console.log('Response:', response.data);
+      // Handle the response data here
+    } catch (error) {
+      console.error('Error:', error);
+      // Handle the error here
     }
-  };
-
-  const bearerToken = process.env.REACT_APP_GIFT_CARD_SECRET_KEY;
-
-  try {
-    const response = await axios.post(url, requestBody, {
-      headers: {
-        Authorization: `Bearer ${bearerToken}`
-      }
-    });
-    console.log('Response:', response.data);
-    // Handle the response data here
-  } catch (error) {
-    console.error('Error:', error);
-    // Handle the error here
   }
 };
 
 const GetLastCart = async () => {
 
-  const apiEndpoint = "https://api.us-central1.gcp.commercetools.com/99minds/carts";
+  const apiEndpoint = `${Url}/${Project_key}/carts`;
   const bearerToken = process.env.REACT_APP_SECRET_API_KEY;
   const axiosConfig = {
     headers: {

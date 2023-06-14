@@ -5,8 +5,11 @@ const Card = (props) => {
     const [getsinglecart, setGetSingleCart] = useState([])
     const getlastcart = getsinglecart[getsinglecart?.length - 1];
     const bearerToken = process.env.REACT_APP_SECRET_API_KEY;
-    const apiEndpointForAllCart = 'https://api.us-central1.gcp.commercetools.com/99minds/carts'
-    const apiEndpointForLastCart = `https://api.us-central1.gcp.commercetools.com/99minds/carts/${getlastcart?.id}`
+    const Url = process.env.REACT_APP_API_PUBLIC_URL;
+    const Project_key = process.env.REACT_APP_PROJECT_KEY
+    const apiEndpointForAllCart = `${Url}/${Project_key}/carts`
+    const apiEndpointForLastCart = `${Url}/${Project_key}/carts/${getlastcart?.id}`
+   
 
     const axiosConfig = {
         headers: {
@@ -24,7 +27,7 @@ const Card = (props) => {
     const addLineItem = async (cartVersion, product_Id) => {
         console.log(cartVersion, product_Id, "get productId and caerVersion")
         const myValue = localStorage.getItem("myKey");
-        const apiEndpointaddLineItem = `https://api.us-central1.gcp.commercetools.com/99minds/carts/${myValue}`
+        const apiEndpointaddLineItem = `${Url}/${Project_key}/carts/${myValue}`;
         try {
             const response = await axios.post(apiEndpointaddLineItem, {
                 "version": cartVersion,
@@ -50,7 +53,7 @@ const Card = (props) => {
                         },
                         "shippingDetails": {
                             "targets": [{
-                                "addressKey": "exampleKey4",
+                                "addressKey": "exampleKey1",
                                 "quantity": 1
                             }]
                         }

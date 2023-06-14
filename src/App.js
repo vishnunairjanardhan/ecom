@@ -9,10 +9,13 @@ import Success from './components/Success';
 import Cancel from './components/Cancel';
 
 function App() {
+  
 
   const [apidata, setApidata] = useState([])
   const bearerToken = process.env.REACT_APP_SECRET_API_KEY;
-  const apiEndpoint = 'https://api.us-central1.gcp.commercetools.com/99minds/products';
+  const Url = process.env.REACT_APP_API_PUBLIC_URL;
+  const Project_key = process.env.REACT_APP_PROJECT_KEY
+  const apiEndpoint = `${Url}/${Project_key}/products`;
 
   const axiosConfig = {
     headers: {
@@ -23,7 +26,7 @@ function App() {
 
   const GetLastCart_1 = async () => {
 
-    const apiEndpoint = "https://api.us-central1.gcp.commercetools.com/99minds/carts";
+    const apiEndpoint = `${Url}/${Project_key}/carts`;
     const bearerToken = process.env.REACT_APP_SECRET_API_KEY;
     const axiosConfig = {
         headers: {

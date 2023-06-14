@@ -3,6 +3,7 @@ import axios from 'axios';
 import NavbarForCart from './NavbarForCart';
 import FooterForCart from './FooterForCart';
 import Subtotal from './Subtotal';
+import Giftcard from './Giftcard';
 
 
 const Checkout = () => {
@@ -10,8 +11,12 @@ const Checkout = () => {
     const [couponprice, setCouponPrice] = useState(null)
     const [inputValue, setInputValue] = useState("")
     const [giftcardvalue, setGiftCardValue] = useState("")
+    const [giftcardbalance1, setGiftcardbalance] = useState([])
     const bearerToken = process.env.REACT_APP_SECRET_API_KEY;
-    const apiEndpointForAllCart = 'https://api.us-central1.gcp.commercetools.com/99minds/carts'
+    const Url = process.env.REACT_APP_API_PUBLIC_URL;
+    const Project_key = process.env.REACT_APP_PROJECT_KEY
+    const apiEndpointForAllCart = `${Url}/${Project_key}/carts`
+    
 
     const axiosConfig = {
         headers: {
@@ -30,18 +35,18 @@ const Checkout = () => {
     // Set all Products with last cart
     useEffect(() => {
         const myValue = localStorage.getItem("myKey");
-        axios.get(`https://api.us-central1.gcp.commercetools.com/99minds/carts/${myValue}`, axiosConfig)
+        axios.get(`${Url}/${Project_key}/carts/${myValue}`, axiosConfig)
             .then(response => setProductsQuantity(response?.data))
             .catch(error => console.error(error));
     }, [])
 
     console.log(productsquantity, "from cart33s")
     const myValue = localStorage.getItem("myKey");
-    console.log("myValue", `https://api.us-central1.gcp.commercetools.com/99minds/carts/${myValue}`)
+    console.log("myValue", `${Url}/${Project_key}/carts/${myValue}`)
 
 
     const deleteLineItem = (item_Id, item_Quantity, version) => {
-        const apiLastcart = `https://api.us-central1.gcp.commercetools.com/99minds/carts/${myValue}`;
+        const apiLastcart = `${Url}/${Project_key}/carts/${myValue}`;
         console.log(item_Id, item_Quantity, version, "from deleteLineItem")
 
         axios.post(apiLastcart, {
@@ -57,7 +62,7 @@ const Checkout = () => {
                     },
                     "shippingDetailsToRemove": {
                         "targets": [{
-                            "addressKey": "examplekey1",
+                            "addressKey": "exampleKey1",
                             "quantity": 1
                         }]
                     }
@@ -72,7 +77,7 @@ const Checkout = () => {
     }
 
     const CalldeleteLineItem = async (item_Id, item_Quantity, version) => {
-        const apiEndpoint = "https://api.us-central1.gcp.commercetools.com/99minds/carts";
+        const apiEndpoint = `${Url}/${Project_key}/carts`;
         const bearerToken = process.env.REACT_APP_SECRET_API_KEY;
         const axiosConfig = {
             headers: {
@@ -101,12 +106,12 @@ const Checkout = () => {
 
     const handleInputChangeforgiftcard = (event) => {
         setGiftCardValue(event.target.value);
-        localStorage.setItem("key",event.target.value)
+        localStorage.setItem("key", event.target.value)
         console.log("handleInputChangeforgiftcard...", event.target.value)
     };
 
     const CouponFunc = async (Cart_version) => {
-        const apiLastcart = `https://api.us-central1.gcp.commercetools.com/99minds/carts/${myValue}`;
+        const apiLastcart = `${Url}/${Project_key}/carts/${myValue}`;
         const bearerToken = process.env.REACT_APP_SECRET_API_KEY;
         const axiosConfig = {
             headers: {
@@ -137,7 +142,7 @@ const Checkout = () => {
     }
 
     const AddCouponCodeFunc = async () => {
-        const apiEndpoint = "https://api.us-central1.gcp.commercetools.com/99minds/carts";
+        const apiEndpoint = `${Url}/${Project_key}/carts`;
         const bearerToken = process.env.REACT_APP_SECRET_API_KEY;
         const axiosConfig = {
             headers: {
@@ -160,78 +165,6 @@ const Checkout = () => {
     }
 
 
-    const Create_CartDiscount = async () => {
-        const apiEndpoint = "https://api.us-central1.gcp.commercetools.com/99minds/cart-discounts";
-        const bearerToken = process.env.REACT_APP_SECRET_API_KEY;
-        const axiosConfig = {
-            headers: {
-                'Authorization': `Bearer ${bearerToken}`,
-                'Content-Type': 'application/json'
-            }
-        };
-
-        try {
-            const response = await axios.post(apiEndpoint, {
-                "name": {
-                    "en": "May_End_30%"
-                },
-                "value": {
-                    "type": "absolute",
-                    "money": [{
-                        "currencyCode": "EUR",
-                        "centAmount": 5000
-                    }]
-                },
-                "cartPredicate": "1=1",
-                "target": {
-                    "type": "lineItems",
-                    "predicate": "1=1"
-                },
-                "sortOrder": `${Math.random()}`,
-                "isActive": true,
-                "requiresDiscountCode": true
-            }, axiosConfig);
-            console.log("Create_CartDiscount....", response)
-            if (response.data) {
-                Create_DiscountCode(response.data);
-            }
-        }
-        catch (error) {
-            console.error(error);
-        }
-    }
-
-    const Create_DiscountCode = async (r, s, t) => {
-        console.log("(3)Create_DiscountCode....", r)
-        const apiEndpoint = "https://api.us-central1.gcp.commercetools.com/99minds/discount-codes";
-        const bearerToken = process.env.REACT_APP_SECRET_API_KEY;
-        const axiosConfig = {
-            headers: {
-                'Authorization': `Bearer ${bearerToken}`,
-                'Content-Type': 'application/json'
-            }
-        };
-        try {
-            const response = await axios.post(apiEndpoint, {
-                "code": `${s}`,
-                "name": {
-                    "en": `${t}`
-                },
-                "cartDiscounts": [{
-                    "typeId": "cart-discount",
-                    "id": `${r.id}` //respones id from Create_DiscountCode function 
-                }],
-                "isActive": true,
-                "cartPredicate": "1=1"
-            }, axiosConfig);
-            console.log("(4) Create_DiscountCode......", response)
-
-        }
-        catch (error) {
-            console.error(error);
-        }
-    }
-
     // code flow starts here for gift card.
     const Check_Gift_Card_balance = async () => {
         const apiEndpointGiftCard = `https://dev.api.giftcard.99minds.co/api/v1/giftcards/balance?giftcard_number=${giftcardvalue}`;
@@ -242,7 +175,7 @@ const Checkout = () => {
                 'Content-Type': 'application/json'
             }
         };
-        const apiEndpointforCreate_CartDiscount = "https://api.us-central1.gcp.commercetools.com/99minds/cart-discounts";
+        const apiEndpointforCreate_CartDiscount = `${Url}/${Project_key}/cart-discounts`;
         const bearerTokenCreate_CartDiscount = process.env.REACT_APP_SECRET_API_KEY;
         const axiosConfig = {
             headers: {
@@ -251,21 +184,21 @@ const Checkout = () => {
             }
         };
 
-        const apiEndpointCreate_DiscountCode = "https://api.us-central1.gcp.commercetools.com/99minds/discount-codes";
-        const apiEndpointlastcart = "https://api.us-central1.gcp.commercetools.com/99minds/carts";
-        
+        const apiEndpointCreate_DiscountCode = `${Url}/${Project_key}/discount-codes`;
+        const apiEndpointlastcart = `${Url}/${Project_key}/carts`;
+
 
         try {
 
             const response = await axios.get(apiEndpointGiftCard, axiosConfigGiftCard)
 
-            if (response.data) {
-                console.log("(1)Check_Gift_Card_balance......", response.data.data.giftcard)
+            if (response?.data) {
+                console.log("(1)Check_Gift_Card_balance......", response.data.data.balance)
                 let giftcardnumber = response.data.data.giftcard_number
                 let giftcardbalance = response.data.data.balance
                 localStorage.setItem('value', response.data.data.balance);
                 // working on Create_CartDiscount 253 
-                
+
 
                 // Create_CartDiscount
                 const responseofCreate_CartDiscount = await axios.post(apiEndpointforCreate_CartDiscount, {
@@ -314,7 +247,7 @@ const Checkout = () => {
                             const lastValue = responselastcart.data.results[responselastcart.data.results?.length - 1];
                             console.log("AddCouponCodeFunc...", lastValue)
                             // Add discountcode
-                            const apiLastcart = `https://api.us-central1.gcp.commercetools.com/99minds/carts/${myValue}`;
+                            const apiLastcart = `${Url}/${Project_key}/carts/${myValue}`;
                             const response = await axios.post(apiLastcart, {
                                 "version": lastValue.version,
                                 "actions": [
@@ -326,15 +259,13 @@ const Checkout = () => {
                             }, axiosConfig);
                             if (response.data) {
                                 console.log("CouponFunc..", response.data)
+                                const newItems = [...giftcardbalance1, giftcardbalance];
+                                setGiftcardbalance(newItems)
                                 setCouponPrice(response.data.totalPrice.centAmount)
                             }
-                            // CouponFunc(lastValue.version)
 
                         }
                     }
-
-
-                    // Create_DiscountCode(responseofCreate_CartDiscount.data,giftcardnumber,giftcardcampaign_name);
                 }
 
             }
@@ -345,7 +276,7 @@ const Checkout = () => {
     }
 
     // gift card ends here
-
+   
     return (
         <>
             <NavbarForCart />
@@ -398,40 +329,50 @@ const Checkout = () => {
                                 <th scope="row">Subtotal</th>
                                 <td>${<Subtotal />}</td>
                             </tr>
+
+                            {giftcardbalance1.length>0 ? giftcardbalance1.map((i) => {
+                                return (
+                                    <tr> <th scope="row">Gift certificate</th><td><b>-${i}</b></td></tr>
+                                )}
+                            ):(<Giftcard/>)}
+                           
+                            {/* <tr> <th scope="row">Gift certificate</th><td><b>-${<Giftcard/>}</b></td></tr> */}
+                            
+                            {console.log("giftcardbalance1 checkout......", giftcardbalance1)}
                             <tr>
                                 <th scope="row"></th>
-                                    <div className="card card-body">
-                                        <div className="row g-3 align-items-center" style={{ width: "570px" }}>
-                                            <div style={{ display: "flex" }}>
-                                                <div className="col-auto" style={{ paddingRight: "10px" }}>
-                                                    <label htmlFor="input" className="col-form-label">Coupon</label>
-                                                </div>
-                                                <div className="col-auto" style={{ paddingRight: "10px" }}>
-                                                    <input type="Text" className="form-control" onChange={handleInputChange} />
-                                                </div>
-                                                <div className="col-auto" style={{ paddingRight: "10px" }}>
-                                                    <button type="button" className="btn btn-primary" onClick={() => { AddCouponCodeFunc() }}>Apply</button>
-                                                </div>
+                                <div className="card card-body">
+                                    <div className="row g-3 align-items-center" style={{ width: "570px" }}>
+                                        <div style={{ display: "flex" }}>
+                                            <div className="col-auto" style={{ paddingRight: "10px" }}>
+                                                <label htmlFor="input" className="col-form-label">Coupon</label>
                                             </div>
-                                            <div style={{ display: "flex", width: "25%" }}>
-                                                <div className="col-auto" style={{ paddingRight: "10px" }}>
-                                                    <label htmlFor="input" className="col-form-label" >Gift Card</label>
-                                                </div>
-                                                <div className="col-auto" style={{ paddingRight: "10px" }}>
-                                                    <input type="Text" className="form-control" onChange={handleInputChangeforgiftcard} />
-                                                </div>
-                                                <div className="col-auto" style={{ paddingRight: "10px" }}>
-                                                    <label htmlFor="input" className="col-form-label">Pin</label>
-                                                </div>
-                                                <div className="col-auto" style={{ paddingRight: "10px" }}>
-                                                    <input type="password" className="form-control" style={{ width: "120px" }} />
-                                                </div>
-                                                <div className="col-auto">
-                                                    <button type="button" className="btn btn-primary" onClick={() => { Check_Gift_Card_balance() }}>Redeem</button>
-                                                </div>
+                                            <div className="col-auto" style={{ paddingRight: "10px" }}>
+                                                <input type="Text" className="form-control" onChange={handleInputChange} />
+                                            </div>
+                                            <div className="col-auto" style={{ paddingRight: "10px" }}>
+                                                <button type="button" className="btn btn-primary" onClick={() => { AddCouponCodeFunc() }}>Apply</button>
+                                            </div>
+                                        </div>
+                                        <div style={{ display: "flex", width: "25%" }}>
+                                            <div className="col-auto" style={{ paddingRight: "10px" }}>
+                                                <label htmlFor="input" className="col-form-label" >Gift Card</label>
+                                            </div>
+                                            <div className="col-auto" style={{ paddingRight: "10px" }}>
+                                                <input type="Text" className="form-control" onChange={handleInputChangeforgiftcard} />
+                                            </div>
+                                            <div className="col-auto" style={{ paddingRight: "10px" }}>
+                                                <label htmlFor="input" className="col-form-label">Pin</label>
+                                            </div>
+                                            <div className="col-auto" style={{ paddingRight: "10px" }}>
+                                                <input type="password" className="form-control" style={{ width: "120px" }} />
+                                            </div>
+                                            <div className="col-auto">
+                                                <button type="button" className="btn btn-primary" onClick={() => { Check_Gift_Card_balance() }}>Redeem</button>
                                             </div>
                                         </div>
                                     </div>
+                                </div>
                             </tr>
                             <tr>
                                 <th scope="row">Grand Total</th>
