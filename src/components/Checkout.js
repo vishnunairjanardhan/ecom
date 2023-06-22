@@ -16,7 +16,7 @@ const Checkout = () => {
     const Url = process.env.REACT_APP_API_PUBLIC_URL;
     const Project_key = process.env.REACT_APP_PROJECT_KEY
     const apiEndpointForAllCart = `${Url}/${Project_key}/carts`
-    
+
 
     const axiosConfig = {
         headers: {
@@ -165,6 +165,8 @@ const Checkout = () => {
     }
 
 
+  
+
     // code flow starts here for gift card.
     const Check_Gift_Card_balance = async () => {
         const apiEndpointGiftCard = `https://dev.api.giftcard.99minds.co/api/v1/giftcards/balance?giftcard_number=${giftcardvalue}`;
@@ -175,23 +177,10 @@ const Checkout = () => {
                 'Content-Type': 'application/json'
             }
         };
-        const apiEndpointforCreate_CartDiscount = `${Url}/${Project_key}/cart-discounts`;
-        const bearerTokenCreate_CartDiscount = process.env.REACT_APP_SECRET_API_KEY;
-        const axiosConfig = {
-            headers: {
-                'Authorization': `Bearer ${bearerTokenCreate_CartDiscount}`,
-                'Content-Type': 'application/json'
-            }
-        };
-
-        const apiEndpointCreate_DiscountCode = `${Url}/${Project_key}/discount-codes`;
-        const apiEndpointlastcart = `${Url}/${Project_key}/carts`;
-
 
         try {
-
             const response = await axios.get(apiEndpointGiftCard, axiosConfigGiftCard)
-
+            console.log("response...", response)
             if (response?.data) {
                 console.log("(1)Check_Gift_Card_balance......", response.data.data.balance)
                 let giftcardnumber = response.data.data.giftcard_number
@@ -199,73 +188,47 @@ const Checkout = () => {
                 localStorage.setItem('value', response.data.data.balance);
                 // working on Create_CartDiscount 253 
 
-
-                // Create_CartDiscount
-                const responseofCreate_CartDiscount = await axios.post(apiEndpointforCreate_CartDiscount, {
-                    "name": {
-                        "en": `${giftcardnumber}`
-                    },
-                    "value": {
-                        "type": "absolute",
-                        "money": [{
-                            "currencyCode": "EUR",
-                            "centAmount": giftcardbalance * 100
-                        }]
-                    },
-                    "cartPredicate": "1=1",
-                    "target": {
-                        "type": "lineItems",
-                        "predicate": "1=1"
-                    },
-                    "sortOrder": `${Math.random()}`,
-                    "isActive": true,
-                    "requiresDiscountCode": true
-                }, axiosConfig);
-
-                console.log("(2)responseofCreate_CartDiscount....", responseofCreate_CartDiscount)
-
-                if (responseofCreate_CartDiscount.data) {
-                    // Create_DiscountCode
-                    const responseCreate_DiscountCode = await axios.post(apiEndpointCreate_DiscountCode, {
-                        "code": `${giftcardnumber}`,
-                        "name": {
-                            "en": "random"
-                        },
-                        "cartDiscounts": [{
-                            "typeId": "cart-discount",
-                            "id": `${responseofCreate_CartDiscount.data.id}` //respones id from Create_DiscountCode function 
-                        }],
-                        "isActive": true,
-                        "cartPredicate": "1=1"
-                    }, axiosConfig);
-                    console.log("(4) Create_DiscountCode......", responseCreate_DiscountCode)
-
-                    if (responseCreate_DiscountCode.data) {
-                        // lastcart
-                        const responselastcart = await axios.get(apiEndpointlastcart, axiosConfig);
-                        if (responselastcart.data) {
-                            const lastValue = responselastcart.data.results[responselastcart.data.results?.length - 1];
-                            console.log("AddCouponCodeFunc...", lastValue)
-                            // Add discountcode
-                            const apiLastcart = `${Url}/${Project_key}/carts/${myValue}`;
-                            const response = await axios.post(apiLastcart, {
-                                "version": lastValue.version,
-                                "actions": [
-                                    {
-                                        "action": "addDiscountCode",
-                                        "code": `${giftcardnumber}`
-                                    }
-                                ]
-                            }, axiosConfig);
-                            if (response.data) {
-                                console.log("CouponFunc..", response.data)
-                                const newItems = [...giftcardbalance1, giftcardbalance];
-                                setGiftcardbalance(newItems)
-                                setCouponPrice(response.data.totalPrice.centAmount)
-                            }
-
-                        }
+                // getting last cart here
+                const apilastcart = `${Url}/${Project_key}/carts`;
+                const bearerToken = process.env.REACT_APP_SECRET_API_KEY;
+                const axiosConfig = {
+                    headers: {
+                        'Authorization': `Bearer ${bearerToken}`,
+                        'Content-Type': 'application/json'
                     }
+                };
+                const responselastcart = await axios.get(apilastcart, axiosConfig);
+                if (responselastcart.data) {
+                    const lastValuecart = responselastcart.data.results[responselastcart.data.results?.length - 1];
+                    console.log("AddCouponCodeFunc...", lastValuecart)
+                    // Calling directdiscount
+                    const directDiscount = `${Url}/${Project_key}/carts/${lastValuecart.id}`;
+                    const responsedirectdiscount = await axios.post(directDiscount, {
+                        "version": lastValuecart.version,
+                        "actions": [
+                            {
+                                "action": "setDirectDiscounts",
+                                "discounts": [{
+                                    "value": {
+                                        "type": "absolute",
+                                        "money": [{
+                                            "currencyCode": "EUR",
+                                            "centAmount": giftcardbalance * 100
+                                        }]
+                                    },
+                                    "target": {
+                                        "type": "lineItems",
+                                        "predicate": "1=1"
+                                    }
+                                }]
+                            }
+                        ]
+                    }, axiosConfig);
+                    console.log("responsedirectdiscount....", responsedirectdiscount)
+                    setCouponPrice(responsedirectdiscount.data.totalPrice.centAmount)
+                    const newItems = [...giftcardbalance1, giftcardbalance];
+                    setGiftcardbalance(newItems)
+
                 }
 
             }
@@ -276,7 +239,7 @@ const Checkout = () => {
     }
 
     // gift card ends here
-   
+
     return (
         <>
             <NavbarForCart />
@@ -330,14 +293,15 @@ const Checkout = () => {
                                 <td>${<Subtotal />}</td>
                             </tr>
 
-                            {giftcardbalance1.length>0 ? giftcardbalance1.map((i) => {
+                            {giftcardbalance1.length > 0 ? giftcardbalance1.map((i) => {
                                 return (
                                     <tr> <th scope="row">Gift certificate</th><td><b>-${i}</b></td></tr>
-                                )}
-                            ):(<Giftcard/>)}
-                           
+                                )
+                            }
+                            ) : (<Giftcard />)}
+
                             {/* <tr> <th scope="row">Gift certificate</th><td><b>-${<Giftcard/>}</b></td></tr> */}
-                            
+
                             {console.log("giftcardbalance1 checkout......", giftcardbalance1)}
                             <tr>
                                 <th scope="row"></th>

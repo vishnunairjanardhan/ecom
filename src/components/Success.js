@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios';
 import NavbarForCart from './NavbarForCart';
+
 const Url = process.env.REACT_APP_API_PUBLIC_URL;
 const Project_key = process.env.REACT_APP_PROJECT_KEY
+
 
 const CreatePayment = async (Price) => {
   const DigitGenrator = (Math.floor(1000000000 + Math.random() * 9000000000))
@@ -328,7 +330,7 @@ const Redeem = async () => {
     })
   }
 
-  if (arr.length !== 0) {
+ 
     const url = 'https://dev.api.giftcard.99minds.co/api/v1/giftcards/bulk_redeem';
 
     const bearerToken = process.env.REACT_APP_GIFT_CARD_SECRET_KEY;
@@ -350,7 +352,7 @@ const Redeem = async () => {
       console.error('Error:', error);
       // Handle the error here
     }
-  }
+  
 };
 
 const GetLastCart = async () => {

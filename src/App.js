@@ -7,6 +7,7 @@ import Navbar from './components/Navbar';
 import "@stripe/stripe-js"
 import Success from './components/Success';
 import Cancel from './components/Cancel';
+import Gotostripe from './components/Stripe/Gotostripe';
 
 function App() {
   
@@ -93,6 +94,8 @@ function App() {
           <Route path='/checkout' element={<Checkout/>} />
           <Route path='/success' element={<Success />} />
           <Route path='/canceled' element={<Cancel />} />
+          <Route path='/stripe' element={<Gotostripe />} />
+          
         </Routes>
       </BrowserRouter>
 
